@@ -87,6 +87,7 @@ func GenerateAST(data []NodeData, i *int) *Node {
 	*/
 	head := fromNodeData(data[*i])
 	*i--
+
 	if head.isOperation {
 		head.left = GenerateAST(data, i)
 		head.right = GenerateAST(data, i)
