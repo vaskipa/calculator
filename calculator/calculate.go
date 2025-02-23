@@ -6,14 +6,14 @@ import (
 )
 
 type NodeData struct {
-	isOperation bool
-	operation   rune
-	digit       int
+	IsOperation bool
+	Operation   rune
+	Digit       int
 }
 
 type Node struct {
-	left  *Node
-	right *Node
+	Left  *Node
+	Right *Node
 	NodeData
 }
 
@@ -47,7 +47,7 @@ func ToPolishNotation(expression string) ([]NodeData, error) {
 				}
 				var operator NodeData
 				stack, operator = stack[:len(stack)-1], stack[len(stack)-1]
-				if operator.isOperation && operator.operation == '(' {
+				if operator.IsOperation && operator.Operation == '(' {
 					break
 				}
 				polishNotation = append(polishNotation, operator)
@@ -68,7 +68,7 @@ func ToPolishNotation(expression string) ([]NodeData, error) {
 			break
 		}
 		stack, value = stack[:len(stack)-1], stack[len(stack)-1]
-		if value.operation == '(' {
+		if value.Operation == '(' {
 			return nil, errors.New("too many operators")
 		}
 		polishNotation = append(polishNotation, value)
@@ -78,7 +78,7 @@ func ToPolishNotation(expression string) ([]NodeData, error) {
 }
 
 func fromNodeData(nodeData NodeData) *Node {
-	return &Node{NodeData: nodeData, left: nil, right: nil}
+	return &Node{NodeData: nodeData, Left: nil, Right: nil}
 }
 
 func GenerateAST(data []NodeData, i *int) *Node {
@@ -88,35 +88,35 @@ func GenerateAST(data []NodeData, i *int) *Node {
 	head := fromNodeData(data[*i])
 	*i--
 
-	if head.isOperation {
-		head.left = GenerateAST(data, i)
-		head.right = GenerateAST(data, i)
+	if head.IsOperation {
+		head.Left = GenerateAST(data, i)
+		head.Right = GenerateAST(data, i)
 	}
 	return head
 }
 
 func Calculate(node *Node) (float64, error) {
 
-	if !node.isOperation {
-		return float64(node.digit), nil
+	if !node.IsOperation {
+		return float64(node.Digit), nil
 	}
 
-	left, err := Calculate(node.left)
+	left, err := Calculate(node.Left)
 	if err != nil {
 		return 0, err
 	}
-	right, err := Calculate(node.right)
+	right, err := Calculate(node.Right)
 	if err != nil {
 		return 0, err
 	}
-	if node.operation == '+' {
+	if node.Operation == '+' {
 		return left + right, nil
 	}
-	if node.operation == '-' {
+	if node.Operation == '-' {
 		// нужно проверить потом, тут может перепутано
 		return left - right, nil
 	}
-	if node.operation == '*' {
+	if node.Operation == '*' {
 		return left * right, nil
 	}
 
